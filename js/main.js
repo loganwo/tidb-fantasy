@@ -8,8 +8,9 @@ class SandboxScene extends Phaser.Scene {
   constructor() { super('sandbox'); }
   create() {
     // SVG 矢量资产：用 Image 元素加载（file:// 下不受 XHR 限制），注册为纹理
-    for (let i = 0; i < 12; i++) this.registerSvg('sup' + i, 'asset/icons/supply-' + i + '.svg');
-    this.registerSvg('scenebg', 'asset/icons/scene-bg.svg');
+    // 纹理资产用 PNG（SVG 直传 WebGL 在部分浏览器/GPU 下栅格化异常会画成黑块，PNG 行为一致）
+    for (let i = 0; i < 12; i++) this.registerSvg('sup' + i, 'asset/icons/supply-' + i + '.png?v=2');
+    this.registerSvg('scenebg', 'asset/icons/scene-bg.png?v=2');
     this.registerSvg('foe', 'asset/foe.png?v=4');
     this.registerSvg('foe2', 'asset/foe2.png?v=4');   // 攻城重甲（围攻军团）
     for (let i = 0; i < 6; i++) this.registerSvg('gate' + i, 'asset/gates/gate-' + i + '.jpg?v=26');

@@ -18,7 +18,7 @@
 const CHARACTERS = {
   tidby: { name: '小Ti', color: '#2e86ab', avatar: 'asset/hero.jpg', zoom: 1.6, origin: '50% 30%' },
   pit:   { name: '老皮特', color: '#8e44ad', avatar: 'asset/icons/avatar-pit.png', zoom: 2.8, origin: '52% 12%' },   // 武斗派军师
-  king:  { name: '混沌之王', color: '#c0392b', avatar: 'asset/icons/avatar-king.svg' }, // 终极 BOSS
+  king:  { name: '混沌之王', color: '#c0392b', avatar: 'asset/icons/avatar-king.png' }, // 终极 BOSS
 };
 
 /* 章节通关后授予的称号 */
