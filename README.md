@@ -129,4 +129,5 @@
 
 - 前端：Phaser 3 / 原生 Canvas，零依赖静态部署；素材含 AI 生成城门插画与 Kenney UI Pack（CC0）。
 - 后端：Node + mysql2，通过 TLS 真实连接**平凯云 TiDB（Serverless）**，承载排行榜与对局数据看板（Vercel Serverless Functions）。
+- 数据库：**平凯云 TiDB Cloud** —— 一款全托管的分布式云数据库服务（兼容 MySQL 协议），开箱即用、弹性扩缩容、自带高可用与容灾；本作的排行榜与对局数据即存放于此。控制台：<https://console.cloud.pingkai.cn/>
 - 对应 TiDB 原理由 PingCAP 社区资料整理，游戏仅供教学演示。
