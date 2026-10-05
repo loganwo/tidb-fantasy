@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" href="data:,">
+<title>分片城邦：TiDB幻境 —— 动态集群运维生存游戏</title>
+<link rel="stylesheet" href="css/style.css?v=27">
+</head>
+<body>
+
+  <!-- ========== 主菜单 ========== -->
+  <div id="screen-menu" class="screen active">
+    <div class="menu-hero" id="menu-hero">
+      <div class="sky-layer" id="sky-stars"></div>
+      <div class="moon"></div>
+      <div class="hero-title-wrap">
+        <h1 class="game-title">分片城邦<span>TiDB 幻境</span></h1>
+        <p class="slogan">实时抗灾 · 动态维稳 —— 用游戏看懂 TiDB 分布式核心原理</p>
+        <p id="menu-stars" class="menu-stars"></p>
+      </div>
+      <div class="army-march" id="army-march"></div>
+      <div class="skyline-wrap" id="skyline-wrap">
+        <svg viewBox="0 0 1280 130" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+          <g fill="#2e86ab" fill-opacity="0.14">
+            <path d="M0 130 V96 H30 V80 H50 V96 H70 V70 L85 52 L100 70 V96 H150 V84 H190 V96 H240 V78 L260 58 L280 78 V96 H340 V88 H390 V60 L410 40 L430 60 V88 H500 V96 H560 V74 L585 50 L610 74 V96 H680 V86 H730 V96 H800 V66 L825 44 L850 66 V96 H920 V84 H970 V96 H1040 V72 L1060 52 L1080 72 V96 H1140 V88 H1190 V96 H1240 V80 H1280 V130 Z"/>
+          </g>
+          <g fill="#2e86ab" fill-opacity="0.22">
+            <path d="M405 40 V18 L410 12 L415 18 V40 Z"/><path d="M580 50 V30 L585 24 L590 30 V50 Z"/><path d="M820 44 V26 L825 20 L830 26 V44 Z"/>
+            <rect x="560" y="74" width="24" height="22"/><rect x="620" y="74" width="100" height="22"/><rect x="740" y="66" width="24" height="30"/>
+            <rect x="390" y="60" width="20" height="28"/><rect x="800" y="66" width="22" height="30"/>
+          </g>
+          <g class="win" fill="#ffd98a">
+            <rect x="572" y="80" width="4" height="6"/><rect x="584" y="80" width="4" height="6"/>
+            <rect x="640" y="80" width="4" height="6"/><rect x="656" y="80" width="4" height="6"/><rect x="688" y="80" width="4" height="6"/>
+            <rect x="748" y="72" width="4" height="6"/>
+            <rect x="398" y="66" width="4" height="6"/><rect x="808" y="72" width="4" height="6"/>
+          </g>
+          <g class="win w2" fill="#ffe9b0">
+            <rect x="650" y="92" width="4" height="6"/><rect x="672" y="92" width="4" height="6"/>
+            <rect x="586" y="92" width="4" height="6"/><rect x="710" y="92" width="4" height="6"/>
+          </g>
+          <g class="flag"><line x1="410" y1="12" x2="410" y2="2" stroke="#8a6a3a" stroke-width="2"/><path d="M410 2 L432 7 L410 13 Z" fill="#d05a4e"/></g>
+          <g class="flag f2"><line x1="585" y1="24" x2="585" y2="14" stroke="#8a6a3a" stroke-width="2"/><path d="M585 14 L607 19 L585 25 Z" fill="#d05a4e"/></g>
+          <g class="flag f3"><line x1="825" y1="20" x2="825" y2="10" stroke="#8a6a3a" stroke-width="2"/><path d="M825 10 L847 15 L825 21 Z" fill="#d05a4e"/></g>
+        </svg>
+        <img class="menu-mascot" id="menu-mascot" src="asset/hero.jpg" alt="小Ti">
+        <div class="mascot-glow"></div>
+      </div>
+      <div class="embers" id="menu-embers"></div>
+    </div>
+    <div class="menu-body">
+      <div id="lv-grid"></div>
+      <div class="menu-side">
+        <div id="menu-hero-card"></div>
+        <button class="btn big" id="btn-continue">▶ 继续冒险</button>
+        <button class="btn ghost" id="btn-codex">📚 运维图鉴</button>
+        <button class="btn ghost sm2" id="btn-reset-progress">🗑 重置进度</button>
+        <div class="menu-help">
+          <b>怎么玩？</b>
+          <p>🚚 拖拽仓库到另一城区 = 货物转运（1⚡）</p>
+          <p>📦 点击仓库后按【分仓】= 一分为二（0.5⚡）</p>
+          <p>⚔️ 敌军攻城：拖仓支援死守，或攒 3⚡ 御敌反击！</p>
+          <p>🔥 妖火仓库及时分仓，把火苗一分为二！</p>
+          <p>📦 仓存货超 36 爆仓，及时分仓！</p>
+          <p>⏱️ 守住城邦到倒计时结束，低风险拿三星！</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 图鉴 ========== -->
+  <div id="screen-codex" class="screen">
+    <div class="codex-head">
+      <button class="btn ghost" id="btn-codex-back">← 返回基地</button>
+      <h2>📚 TiDB 运维图鉴</h2>
+    </div>
+    <div id="codex-grid"></div>
+  </div>
+
+  <!-- ========== 游戏 ========== -->
+  <div id="screen-game" class="screen">
+    <header id="topbar">
+      <button class="btn ghost sm" id="btn-back" title="返回基地">←</button>
+      <span id="lv-name">关卡</span>
+      <span id="timer">0:00</span>
+      <div class="meter"><label>算力</label><div class="bar"><i id="power-bar"></i></div><b id="power-num">0</b><span class="meter-max" id="power-max">/5</span></div>
+      <div class="meter"><label>风险</label><div class="bar"><i id="risk-bar" class="ok"></i></div><b id="risk-num">0</b></div>
+      <span id="flood-mark">🌊 洪峰中</span>
+      <span id="gold-chip" title="战备金币">💰 0</span>
+      <button class="btn ghost sm" id="btn-recharge" title="花金币立即恢复算力" style="display:none">⚡+1 (10💰)</button>
+      <span class="tb-space"></span>
+      <button class="btn ghost sm" id="btn-pause" title="暂停">⏸</button>
+      <button class="btn ghost sm" id="btn-reset" title="重开本关">↻</button>
+      <button class="btn ghost sm" id="btn-sfx" title="音效">🔊</button>
+    </header>
+
+    <div id="mid">
+      <div id="sandbox-wrap">
+        <div id="sandbox"></div>
+      </div>
+      <aside id="sidebar">
+        <div id="hero-strip">
+          <img id="hero-avatar" src="asset/hero.jpg" alt="小Ti">
+          <div id="hero-meta"><b id="hero-name">小Ti</b><span id="hero-title">见习生</span></div>
+        </div>
+        <div class="panel-card" id="req-card">
+          <div class="task-title" id="req-title">🚚 出征集结 · 内城</div>
+          <div id="req-line">—</div>
+        </div>
+        <div class="panel-card" id="task-card">
+          <div class="task-title">🎯 本关任务</div>
+          <div id="task-list"></div>
+        </div>
+        <div class="panel-card" id="sel-info"></div>
+        <button class="btn big" id="btn-split">✂️ 分仓</button>
+        <div id="split-hint"></div>
+        <button class="btn danger-solid" id="btn-repel" style="display:none">⚔️ 御敌反击</button>
+        <button class="btn ghost" id="btn-quick" style="display:none">🔨 急修队</button>
+        <button class="btn ghost" id="btn-hint">💡 军师建议</button>
+        <div class="side-help">
+          <p>🚚 拖拽仓库 = 货物转运（1⚡）</p>
+          <p>📦 分仓 = 一分为二（0.5⚡）</p>
+          <p>🔥 被焚的仓不可恢复，需手动转运补充</p>
+          <p>⚡ 算力每 2 秒恢复 1 点</p>
+        </div>
+      </aside>
+    </div>
+
+    <footer id="pdconsole">
+      <div id="pdlogs"></div>
+    </footer>
+
+    <div id="overlay" class="hidden"></div>
+    <div id="dialog" class="hidden">
+      <div class="dlg-box">
+        <div class="dlg-avatar" id="dlg-avatar"></div>
+        <div class="dlg-main">
+          <div class="dlg-name" id="dlg-name"></div>
+          <div class="dlg-text" id="dlg-text"></div>
+          <div class="dlg-next" id="dlg-next">▼ 点击继续</div>
+        </div>
+        <button class="dlg-skip" id="dlg-skip">跳过 »</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/lib/phaser.min.js?v=27"></script>
+  <script src="js/config.js?v=27"></script>
+  <script src="level/levels.js?v=27"></script>
+  <script src="js/gameLogic.js?v=27"></script>
+  <script src="js/eventSystem.js?v=27"></script>
+  <script src="js/sound.js?v=27"></script>
+  <script src="js/dragSystem.js?v=27"></script>
+  <script src="js/uiSystem.js?v=27"></script>
+  <script src="js/main.js?v=27"></script>
+</body>
+</html>
