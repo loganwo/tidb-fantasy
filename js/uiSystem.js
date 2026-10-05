@@ -1183,6 +1183,7 @@ const HUD = {
     if (nb) nb.addEventListener('click', () => { SFX.play('click'); app.startLevel(core.lv.id + 1); });
     const mb = document.getElementById('ov-menu');
     if (mb) mb.addEventListener('click', () => { SFX.play('click'); app.quitToMenu(); });
+    this.afterSettle(app, core, true);
   },
 
   showFail(app, core) {
@@ -1208,6 +1209,27 @@ const HUD = {
       </div>`);
     document.getElementById('ov-retry').addEventListener('click', () => { SFX.play('click'); app.restartLevel(); });
     document.getElementById('ov-menu').addEventListener('click', () => { SFX.play('click'); app.quitToMenu(); });
+    this.afterSettle(app, core, false);
+  },
+
+  afterSettle(app, core, won) {
+    if (typeof LB !== 'undefined' && LB.submitRun) {
+      LB.submitRun(app, core).then(r => {
+        if (r && r.rank) {
+          this.toast(`🏆 成绩已写入平凯云 TiDB！全球第 ${r.rank} 名 / 本关第 ${r.rankLevel} 名`, 'ok');
+        }
+      }).catch(() => {});
+    }
+    const btns = document.querySelector('#overlay .modal-btns');
+    if (btns && !document.getElementById('ov-board')) {
+      const b = document.createElement('button');
+      b.className = 'btn ghost'; b.id = 'ov-board'; b.textContent = '🏆 看排行榜';
+      b.addEventListener('click', () => {
+        if (window.SFX) SFX.play('click');
+        if (typeof LBUI !== 'undefined') LBUI.open();
+      });
+      btns.appendChild(b);
+    }
   },
 
   showPause(app) {

@@ -921,3 +921,53 @@ button:focus-visible, .lv-cell:focus-visible { outline: 2px solid #7fb2cc; outli
   .panel-card { border-radius: 10px; }
   #sidebar { gap: 8px; padding: 8px; }
 }
+
+/* =========================================================
+ * 排行榜 / 对局看板（屏幕 #screen-leaderboard）
+ * ========================================================= */
+#screen-leaderboard { overflow-y: auto; background: linear-gradient(180deg, #1d3a52 0%, #dfeaf2 100%); }
+.lb-head {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 18px 24px 6px; background: linear-gradient(180deg, #1d3a52 0%, #2a5474 100%);
+  border-bottom: 2px solid #e6b84c;
+}
+.lb-title { color: #ffd98a; letter-spacing: 1px; font-size: 20px; margin: 0; text-shadow: 0 1px 2px rgba(0,0,0,.5); }
+.lb-name-wrap { margin-left: auto; color: #c9dbe8; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+.lb-input {
+  border: 1.5px solid #c9972f; border-radius: 8px; padding: 5px 10px; font-size: 13px;
+  background: #fff8e6; color: #5d4408; font-family: inherit; width: 150px;
+}
+.lb-db { color: #ffd98a; font-size: 12px; font-weight: 700; }
+.lb-tabs { display: flex; gap: 10px; padding: 14px 24px 0; }
+.lb-tab {
+  border: 1.5px solid var(--border); background: #fff; color: var(--primary);
+  border-radius: 10px 10px 0 0; padding: 9px 18px; font-size: 14px; font-weight: 700;
+  cursor: pointer; font-family: inherit; transition: .12s;
+}
+.lb-tab:hover { transform: translateY(-1px); }
+.lb-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.lb-sub { padding: 6px 24px; color: var(--text-sub); font-size: 13px; }
+.lb-body { padding: 4px 24px 40px; max-width: 1100px; width: 100%; margin: 0 auto; }
+.lb-loading, .lb-empty { padding: 40px; text-align: center; color: var(--text-sub); }
+.lb-cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 18px; }
+.lb-card { background: var(--panel); border: 1.5px solid var(--border); border-radius: 12px; padding: 14px 10px; text-align: center; box-shadow: 0 2px 8px rgba(29,53,71,.08); }
+.lb-card b { display: block; font-size: 22px; color: var(--primary-dark); font-variant-numeric: tabular-nums; }
+.lb-card span { font-size: 11.5px; color: var(--text-sub); }
+.lb-h3 { font-size: 15px; color: var(--primary-dark); margin: 18px 0 8px; }
+.lb-select { border: 1.5px solid var(--primary); border-radius: 8px; padding: 4px 8px; font-family: inherit; font-size: 13px; }
+.lb-table-wrap { background: var(--panel); border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(29,53,71,.08); }
+.lb-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.lb-table th, .lb-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #edf1f6; white-space: nowrap; }
+.lb-table th { background: #eef4f9; color: var(--primary-dark); font-weight: 800; font-size: 12.5px; position: sticky; top: 0; }
+.lb-table tbody tr:hover { background: #f4f9fc; }
+.lb-table .lb-rank { color: var(--primary); font-weight: 800; width: 40px; }
+.lb-table .lb-score { font-weight: 800; font-variant-numeric: tabular-nums; }
+.lb-table .lb-stars { color: var(--warn); letter-spacing: 2px; }
+.lb-table .lb-win { color: var(--ok); font-weight: 700; }
+.lb-table .lb-lose { color: var(--danger); font-weight: 700; }
+.lb-table .lb-time { color: var(--text-sub); font-size: 12px; }
+@media (max-width: 760px) {
+  .lb-cards { grid-template-columns: repeat(2, 1fr); }
+  .lb-table th:nth-child(6), .lb-table td:nth-child(6),
+  .lb-table th:nth-child(8), .lb-table td:nth-child(8) { display: none; }
+}

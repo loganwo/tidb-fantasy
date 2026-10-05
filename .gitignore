@@ -3,3 +3,9 @@
 
 # 工具脚本生成的中间产物
 test/cover_out/
+
+# 本地 TiDB 凭据（含密码），绝不进仓库
+server/.env
+
+# Node 依赖（部署时由 npm install 生成）
+node_modules/

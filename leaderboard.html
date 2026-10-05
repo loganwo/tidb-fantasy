@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>分片城邦：TiDB幻境 · 对局数据看板</title>
+<style>
+  :root { --primary:#2e86ab; --primary-dark:#1d6d8e; --ok:#4caf50; --danger:#f44336; --bg:#0e2236; --panel:#15314a; --border:#27506e; --text:#e6f0f7; --sub:#9fb8cc; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif; background:radial-gradient(1200px 600px at 50% -10%, #1d3a52, #0e2236 70%); color:var(--text); min-height:100vh; padding:28px 18px 60px; }
+  .wrap { max-width:1000px; margin:0 auto; }
+  header { text-align:center; margin-bottom:22px; }
+  h1 { font-size:30px; letter-spacing:2px; color:#fff; text-shadow:0 2px 0 #10222f; }
+  .sub { color:#ffd98a; margin-top:8px; font-size:14px; letter-spacing:1px; }
+  .cards { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:22px; }
+  .card { background:linear-gradient(180deg,#1b3a55,#15314a); border:1px solid var(--border); border-radius:14px; padding:16px 10px; text-align:center; box-shadow:0 4px 14px rgba(0,0,0,.3); }
+  .card b { display:block; font-size:26px; color:#ffd98a; font-variant-numeric:tabular-nums; }
+  .card span { font-size:12px; color:var(--sub); }
+  h2 { font-size:18px; color:#fff; margin:8px 0 12px; letter-spacing:1px; }
+  .table-wrap { background:var(--panel); border:1px solid var(--border); border-radius:14px; overflow:hidden; box-shadow:0 6px 18px rgba(0,0,0,.3); }
+  table { width:100%; border-collapse:collapse; font-size:13.5px; }
+  th,td { padding:10px 12px; text-align:left; border-bottom:1px solid #1f3f59; white-space:nowrap; }
+  th { background:#102a40; color:#9fd0e6; font-weight:700; letter-spacing:.5px; position:sticky; top:0; }
+  tbody tr:hover { background:#1c3e5a; }
+  .rank { color:#ffd98a; font-weight:800; width:42px; }
+  .score { color:#fff; font-weight:800; font-variant-numeric:tabular-nums; }
+  .stars { color:#ffd98a; letter-spacing:2px; }
+  .win { color:#7ddc8a; font-weight:700; }
+  .lose { color:#ff9a8f; font-weight:700; }
+  .time { color:var(--sub); font-size:12px; }
+  .tip { text-align:center; color:var(--sub); font-size:12px; margin-top:18px; }
+  .empty { text-align:center; color:var(--sub); padding:30px; }
+  @media (max-width:760px){ .cards{ grid-template-columns:repeat(2,1fr);} th:nth-child(6),td:nth-child(6),th:nth-child(8),td:nth-child(8){ display:none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🏆 分片城邦：TiDB幻境 · 对局数据看板</h1>
+    <div class="sub" id="db">🛢 平凯云 TiDB</div>
+  </header>
+  <div class="cards" id="cards"></div>
+  <h2>🌍 全球战功总榜（Top 50）</h2>
+  <div class="table-wrap"><div id="board"></div></div>
+  <h2 style="margin-top:24px">📜 最近对局</h2>
+  <div class="table-wrap"><div id="matches"></div></div>
+  <div class="tip">数据每 15 秒自动刷新 · 真实连接平凯云 TiDB Serverless 集群</div>
+</div>
+<script>
+  // 部署时改成你的排行榜 API 基地址（与游戏 js/api-config.js 一致）
+  window.API_BASE = window.API_BASE || 'https://你的vercel地址.vercel.app';
+  const q = new URLSearchParams(location.search).get('api');
+  if (q) window.API_BASE = q;
+  const base = () => (window.API_BASE || '').replace(/\/$/, '');
+  async function api(p){ try{ const r=await fetch(base()+'/api'+p); if(!r.ok) return null; return await r.json(); }catch(e){ return null; } }
+  function stars(n){ n=n||0; return '★'.repeat(n)+'☆'.repeat(3-n); }
+  function fmt(s){ s=Math.max(0,Math.round(s||0)); const m=Math.floor(s/60),r=s%60; return m+':'+String(r).padStart(2,'0'); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  function table(rows, withScore){
+    const head='<tr><th>#</th><th>指挥官</th>'+(withScore?'<th>得分</th>':'')+'<th>星</th><th>结果</th><th>关卡</th><th>时长</th><th>时间</th></tr>';
+    const trs=rows.map((r,i)=>`<tr>
+      <td class="rank">${r.rank}</td><td>${esc(r.player)}</td>
+      ${(withScore?'<td class="score">'+r.score+'</td>':'')}
+      <td class="stars">${stars(r.stars)}</td>
+      <td class="${r.won?'win':'lose'}">${r.won?'✅ 守住':'❌ 失守'}</td>
+      <td>${r.lvl?('第'+r.lvl+'关'+(r.lvlName?(' · '+esc(r.lvlName)):'')):'—'}</td>
+      <td>${r.dur!=null&&r.dur!=='—'?fmt(r.dur):'—'}</td>
+      <td class="time">${esc(r.time)}</td></tr>`).join('');
+    return '<table>'+head+trs+'</table>';
+  }
+  async function load(){
+    const [s,m,b]=await Promise.all([api('/stats'),api('/matches?limit=20'),api('/leaderboard?level=all&limit=50')]);
+    if(s&&s.ok){
+      document.getElementById('db').textContent='🛢 '+ (s.db||'平凯云 TiDB');
+      document.getElementById('cards').innerHTML=`
+        <div class="card"><b>${s.totalMatches}</b><span>总对局</span></div>
+        <div class="card"><b>${s.winRate}%</b><span>胜率 ${s.wins}胜/${s.losses}负</span></div>
+        <div class="card"><b>${s.players}</b><span>参战指挥官</span></div>
+        <div class="card"><b>${s.bestScore}</b><span>最高分</span></div>
+        <div class="card"><b>${s.today}</b><span>今日对局</span></div>`;
+    } else {
+      document.getElementById('cards').innerHTML='<div class="empty">看板暂时连不上，请确认 API 已部署并配置平凯云 TiDB 凭据。</div>';
+    }
+    document.getElementById('board').innerHTML = (b&&b.ok&&b.rows.length)? table(b.rows.map((r,i)=>({rank:i+1,player:r.player,score:r.score,stars:r.stars,won:r.won,lvl:r.lvl,lvlName:r.lvl_name,dur:r.duration_sec,time:r.created_at})), true) : '<div class="empty">还没有战绩。</div>';
+    document.getElementById('matches').innerHTML = (m&&m.ok&&m.rows.length)? table(m.rows.map(r=>({rank:'·',player:r.player,stars:r.stars,won:r.result==='win',lvl:r.lvl,lvlName:r.lvl_name,dur:r.duration_sec,time:r.created_at})), false) : '<div class="empty">还没有对局。</div>';
+  }
+  load(); setInterval(load, 15000);
+</script>
+</body>
+</html>

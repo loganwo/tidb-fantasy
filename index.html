@@ -55,6 +55,7 @@
         <div id="menu-hero-card"></div>
         <button class="btn big" id="btn-continue">▶ 继续冒险</button>
         <button class="btn ghost" id="btn-codex">📚 运维图鉴</button>
+        <button class="btn ghost" id="btn-leaderboard">🏆 排行榜</button>
         <button class="btn ghost sm2" id="btn-reset-progress">🗑 重置进度</button>
         <div class="menu-help">
           <b>怎么玩？</b>
@@ -76,6 +77,22 @@
       <h2>📚 TiDB 运维图鉴</h2>
     </div>
     <div id="codex-grid"></div>
+  </div>
+
+  <!-- ========== 排行榜 / 对局看板 ========== -->
+  <div id="screen-leaderboard" class="screen">
+    <div class="lb-head">
+      <button class="btn ghost sm" id="lb-back">← 返回基地</button>
+      <h2 class="lb-title">🏆 战功榜 · 平凯云 TiDB 实时对局看板</h2>
+      <div class="lb-name-wrap">指挥官代号：<input id="lb-name" class="lb-input" maxlength="40" placeholder="匿名指挥官"><span id="lb-db" class="lb-db"></span></div>
+    </div>
+    <div class="lb-tabs">
+      <button class="lb-tab active" data-tab="global">🌍 全球总榜</button>
+      <button class="lb-tab" data-tab="level">🎯 分关榜</button>
+      <button class="lb-tab" data-tab="dash">📊 对局看板</button>
+    </div>
+    <div class="lb-sub" id="lb-sub"></div>
+    <div id="lb-body" class="lb-body"></div>
   </div>
 
   <!-- ========== 游戏 ========== -->
@@ -147,12 +164,14 @@
 
   <script src="js/lib/phaser.min.js?v=28"></script>
   <script src="js/config.js?v=28"></script>
+<script src="js/api-config.js?v=29"></script>
   <script src="level/levels.js?v=28"></script>
   <script src="js/gameLogic.js?v=28"></script>
   <script src="js/eventSystem.js?v=28"></script>
   <script src="js/sound.js?v=28"></script>
   <script src="js/dragSystem.js?v=28"></script>
-  <script src="js/uiSystem.js?v=28"></script>
-  <script src="js/main.js?v=28"></script>
+<script src="js/uiSystem.js?v=28"></script>
+<script src="js/leaderboard.js?v=29"></script>
+<script src="js/main.js?v=28"></script>
 </body>
 </html>

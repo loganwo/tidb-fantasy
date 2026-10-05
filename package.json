@@ -1,0 +1,12 @@
+{
+  "name": "tidb-fantasy-leaderboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "分片城邦：TiDB幻境 —— 真实连接平凯云 TiDB 的排行榜与对局数据看板",
+  "scripts": {
+    "start": "node server/leaderboard-server.js"
+  },
+  "dependencies": {
+    "mysql2": "^3.11.0"
+  }
+}
