@@ -362,6 +362,17 @@ class SandboxRenderer {
       const dispH = w * (tex.height / tex.width);
       nd.gate.setPosition(x, y + CFG.NODE_H - dispH).setDisplaySize(w, dispH);
       nd.gate.setTint(t.offline ? 0x8890a0 : 0xffffff).setAlpha(t.offline ? 0.12 : 0.8);
+    } else {
+      // 纹理晚到补建：线上网络比磁盘慢，rebuildNodes 执行时城门纹理可能还没 onload 完，
+      // 导致城门永远 null（线上"只剩一个城门"的根因）。渲染时发现纹理就绪但图缺失 → 当场补建并摆位。
+      const key = 'gate' + (t.id % 6);
+      if (this.scene.textures.exists(key)) {
+        nd.gate = this.scene.add.image(0, 0, key).setDepth(1.5).setOrigin(0, 0);
+        const tex = this.scene.textures.get(key).getSourceImage();
+        const dispH = w * (tex.height / tex.width);
+        nd.gate.setPosition(x, y + CFG.NODE_H - dispH).setDisplaySize(w, dispH);
+        nd.gate.setTint(t.offline ? 0x8890a0 : 0xffffff).setAlpha(t.offline ? 0.12 : 0.8);
+      }
     }
 
     // 头部：城区名 + TiKV 编号小字 + 耐久%
