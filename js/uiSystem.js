@@ -826,6 +826,8 @@ const HUD = {
     this.el.lvName.textContent = `第${lv.chapter}章 · ${lv.name}`;
     this.el.powerMax.textContent = '/ ' + lv.powerMax;
     this.el.pdLogs.innerHTML = '';
+    this._rc = {};        // 重置刷新脏检查缓存
+    this._taskEls = null; // 任务 DOM 已重建，丢弃旧引用
     this.setSplitButton({ ok: false, reason: '点击仓库后可分仓' });
     this.selectInfo(null);
     // 角色栏：当前称号
@@ -878,21 +880,33 @@ const HUD = {
     this.log(`📜 战报：十万大军距城邦还有 ${days} 日${phase}`, lv.id <= 5 ? 'info' : 'warn');
   },
 
-  /* 每帧刷新 */
+  /* 每帧刷新（脏检查：仅在数值变化时写 DOM，避免 60fps 下的无谓重排） */
   refresh(core, es) {
-    this.el.timer.textContent = fmtTime(core.timeLeft);
-    this.el.timer.classList.toggle('danger-flash', core.timeLeft <= 10 && core.status === 'playing');
+    const el = this.el;
+    const c = this._rc || (this._rc = {});
+
+    const tStr = fmtTime(core.timeLeft);
+    if (c.timer !== tStr) { c.timer = tStr; el.timer.textContent = tStr; }
+    const flash = core.timeLeft <= 10 && core.status === 'playing';
+    if (c.timerFlash !== flash) { c.timerFlash = flash; el.timer.classList.toggle('danger-flash', flash); }
 
     const pm = core.lv.powerMax;
-    this.el.powerBar.style.width = (core.power / pm * 100) + '%';
-    this.el.powerBar.style.background = core.power >= CFG.COST_MIGRATE ? '#ffc107' : '#e0b04080';
-    this.el.powerNum.textContent = core.power.toFixed(1);
+    const pw = (core.power / pm * 100) + '%';
+    if (c.powerW !== pw) { c.powerW = pw; el.powerBar.style.width = pw; }
+    const pb = core.power >= CFG.COST_MIGRATE ? '#ffc107' : '#e0b04080';
+    if (c.powerBg !== pb) { c.powerBg = pb; el.powerBar.style.background = pb; }
+    const pn = core.power.toFixed(1);
+    if (c.powerNum !== pn) { c.powerNum = pn; el.powerNum.textContent = pn; }
 
-    this.el.riskBar.style.width = core.risk + '%';
-    this.el.riskBar.className = core.risk < CFG.STAR3_RISK ? 'ok' : core.risk < CFG.STAR2_RISK ? 'warn' : 'danger';
-    this.el.riskNum.textContent = Math.round(core.risk);
+    const rw = core.risk + '%';
+    if (c.riskW !== rw) { c.riskW = rw; el.riskBar.style.width = rw; }
+    const rc = core.risk < CFG.STAR3_RISK ? 'ok' : core.risk < CFG.STAR2_RISK ? 'warn' : 'danger';
+    if (c.riskCls !== rc) { c.riskCls = rc; el.riskBar.className = rc; }
+    const rn = Math.round(core.risk);
+    if (c.riskNum !== rn) { c.riskNum = rn; el.riskNum.textContent = rn; }
 
-    this.el.floodMark.style.display = core.floodTimer > 0 ? 'inline-block' : 'none';
+    const flood = core.floodTimer > 0 ? 'inline-block' : 'none';
+    if (c.flood !== flood) { c.flood = flood; el.floodMark.style.display = flood; }
 
     // 紧张心跳：最后 10 秒或敌袭预警期间，低频鼓点每 0.85 秒一拍
     const urgent = core.status === 'playing' &&
@@ -906,58 +920,87 @@ const HUD = {
     } else this._hbLast = 0;
 
     // 金币 + 御敌/急修按钮状态
-    if (this.el.goldChip) this.el.goldChip.textContent = '💰 ' + (this.app.gold || 0);
-    if (this.el.btnRecharge) {
-      const rc = this.el.btnRecharge;
+    if (el.goldChip) {
+      const g = '💰 ' + (this.app.gold || 0);
+      if (c.gold !== g) { c.gold = g; el.goldChip.textContent = g; }
+    }
+    if (el.btnRecharge) {
       const can = this.app.gold >= 10 && core.power < core.lv.powerMax - 0.05;
-      rc.style.display = this.app.core ? '' : 'none';
-      rc.disabled = !can;
+      const sig = (this.app.core ? 1 : 0) + '|' + (can ? 1 : 0);
+      if (c.recharge !== sig) {
+        c.recharge = sig;
+        el.btnRecharge.style.display = this.app.core ? '' : 'none';
+        el.btnRecharge.disabled = !can;
+      }
     }
-    if (this.el.btnRepel) {
+    if (el.btnRepel) {
       const siege = es && es.warnings.some(w => !w.planned);
-      this.el.btnRepel.style.display = siege ? '' : 'none';
-      this.el.btnRepel.disabled = !siege || core.power < ECON.REPEL_COST;
-      this.el.btnRepel.textContent = siege ? `⚔️ 御敌反击（${ECON.REPEL_COST}⚡·推退敌军，需城内≥3仓）` : '⚔️ 御敌';
+      const txt = siege ? `⚔️ 御敌反击（${ECON.REPEL_COST}⚡·推退敌军，需城内≥3仓）` : '⚔️ 御敌';
+      const sig = (siege ? 1 : 0) + '|' + (core.power < ECON.REPEL_COST ? 1 : 0) + '|' + txt;
+      if (c.repel !== sig) {
+        c.repel = sig;
+        el.btnRepel.style.display = siege ? '' : 'none';
+        el.btnRepel.disabled = !siege || core.power < ECON.REPEL_COST;
+        el.btnRepel.textContent = txt;
+      }
     }
-    if (this.el.btnQuick) {
+    if (el.btnQuick) {
       const sel = this.app.renderer ? this.app.renderer.selected : null;
       const r = sel != null ? core.regionById(sel) : null;
       const payGold = !!(this.app.buffs && this.app.buffs.repair); // 急修队：付金币；否则耗算力
       const need = r && !r.dead && r.replicas.length > 0 && r.replicas.length < 3;
       const afford = payGold ? (this.app.gold || 0) >= ECON.REPAIR_GOLD : core.power >= CFG.REPAIR_COST;
       const can = !!(need && afford);
-      this.el.btnQuick.style.display = ''; // 补货对所有人生效，不再需要买急修队
-      this.el.btnQuick.disabled = !can;
-      this.el.btnQuick.textContent = can
+      const txt = can
         ? `🔨 补货${SUPPLY.name(r.id)}（${payGold ? ECON.REPAIR_GOLD + '💰' : CFG.REPAIR_COST + '⚡'}）`
         : (need ? `🔨 补货（需 ${payGold ? ECON.REPAIR_GOLD + '💰' : CFG.REPAIR_COST + '⚡'}）` : '🔨 补货');
-    }
-
-    // 出征集结进度
-    if (this.el.reqLine) {
-      const rq = core.requisition;
-      if (!rq) {
-        this.el.reqCard.style.display = 'none';
-      } else {
-      const done = core.requisitionMet;
-      this.el.reqLine.innerHTML = done
-        ? '🎖 已达成！大军提前开拔'
-        : `向<b>${CITY.name(rq.city)}</b>集结 <b>${core.requisitionCount}</b> / ${rq.count} 处仓库`;
-      this.el.reqCard.classList.toggle('done', done);
-      this.el.reqCard.classList.toggle('hot', !done && core.requisitionCount >= rq.count - 1);
+      const sig = (need ? 1 : 0) + '|' + (can ? 1 : 0) + '|' + txt;
+      if (c.quick !== sig) {
+        c.quick = sig;
+        el.btnQuick.style.display = ''; // 补货对所有人生效，不再需要买急修队
+        el.btnQuick.disabled = !can;
+        el.btnQuick.textContent = txt;
       }
     }
 
-    // 任务实时进度
+    // 出征集结进度
+    if (el.reqLine) {
+      const rq = core.requisition;
+      if (!rq) {
+        if (c.req !== 'none') { c.req = 'none'; el.reqCard.style.display = 'none'; }
+      } else {
+        const done = core.requisitionMet;
+        const html = done
+          ? '🎖 已达成！大军提前开拔'
+          : `向<b>${CITY.name(rq.city)}</b>集结 <b>${core.requisitionCount}</b> / ${rq.count} 处仓库`;
+        if (c.reqHtml !== html) { c.reqHtml = html; el.reqLine.innerHTML = html; }
+        const hot = !done && core.requisitionCount >= rq.count - 1;
+        const sig = (done ? 1 : 0) + '|' + (hot ? 1 : 0);
+        if (c.req !== sig) {
+          c.req = sig;
+          el.reqCard.style.display = '';
+          el.reqCard.classList.toggle('done', done);
+          el.reqCard.classList.toggle('hot', hot);
+        }
+      }
+    }
+
+    // 任务实时进度（缓存元素，避免每帧 getElementById / querySelector）
     if (core.lv.tasks && core.lv.tasks.length) {
+      if (!this._taskEls || this._taskEls.length !== core.lv.tasks.length) {
+        this._taskEls = core.lv.tasks.map((t, i) => {
+          const node = document.getElementById('task-' + i);
+          return node ? { node, prog: node.querySelector('.task-prog'), v: null, done: null } : null;
+        });
+      }
       core.lv.tasks.forEach((t, i) => {
-        const el = document.getElementById('task-' + i);
-        if (!el) return;
+        const te = this._taskEls[i];
+        if (!te) return;
         const v = core.taskValue(t);
+        const prog = `${Math.min(v, t.target)}/${t.target}`;
+        if (te.v !== prog) { te.v = prog; te.prog.textContent = prog; }
         const met = core.taskMet(t);
-        const prog = el.querySelector('.task-prog');
-        prog.textContent = t.op === '<=' ? `${Math.min(v, t.target)}/${t.target}` : `${Math.min(v, t.target)}/${t.target}`;
-        el.classList.toggle('done', met);
+        if (te.done !== met) { te.done = met; te.node.classList.toggle('done', met); }
       });
     }
   },

@@ -111,6 +111,18 @@ const script = `
     }
   }
   out.push('T6 AI全勤打第1关: status=' + core.status + ' t=' + core.t.toFixed(0) + ' stars=' + core.calcStars() + ' peakRisk=' + core.peakRisk.toFixed(0) + ' ops=' + core.opsCount);
+
+  // T7 城墙加固：wallLv 越高，正向风险累积越慢（回归：曾误用不存在的 buffs.wall 导致永久失效）
+  const riskAfterWall = (wallLv) => {
+    const c = new GameCore(L[0], { buffs: { wallLv: wallLv } });
+    c.risk = 0;
+    c.regions[0].replicas = c.regions[0].replicas.slice(0, 1); // 制造「副本不足」这一正向风险源
+    c.computeRisk(1);
+    return c.risk;
+  };
+  const w0 = riskAfterWall(0), w3 = riskAfterWall(3);
+  const ratio = w0 > 0 ? w3 / w0 : 0;
+  out.push('T7 城墙加固: wallLv0=' + w0.toFixed(2) + ' wallLv3=' + w3.toFixed(2) + ' 比率=' + ratio.toFixed(2) + ' (期望≈0.55)');
   return out.join('\\n');
 })()
 `;

@@ -386,7 +386,7 @@ const App = {
     });
   },
 
-  /* ---------- 首页动态特效：星空 / 萤火 / 行军 / 视差 ---------- */
+  /* ---------- 首页动态特效：星空 / 视差 ---------- */
   initMenuFx() {
     if (this._menuFx) return;
     this._menuFx = true;
@@ -403,36 +403,6 @@ const App = {
           `width:${size}px;height:${size}px;--d:${(2 + Math.random() * 3.5).toFixed(1)}s;--dl:${(Math.random() * 4).toFixed(1)}s"></i>`;
       }
       starBox.innerHTML = html;
-    }
-
-    // 萤火
-    const emberBox = null;
-    if (emberBox && !reduceMotion) {
-      let html = '';
-      for (let i = 0; i < 14; i++) {
-        html += `<i style="left:${(4 + Math.random() * 92).toFixed(1)}%;` +
-          `animation-duration:${(5 + Math.random() * 6).toFixed(1)}s;animation-delay:${(Math.random() * 9).toFixed(1)}s;` +
-          `--sway:${((Math.random() - 0.5) * 90).toFixed(0)}px;transform:scale(${(0.6 + Math.random() * 0.9).toFixed(2)})"></i>`;
-      }
-      emberBox.innerHTML = html;
-    }
-
-    // 行军大军（循环横穿地平线）
-    const army = null;
-    if (army && !reduceMotion) {
-      const makeWave = (offsetPct) => {
-        let html = '';
-        for (let i = 0; i < 14; i++) {
-          html += `<span class="soldier" style="left:calc(${offsetPct}% + ${i * 34}px);animation-delay:${(i * 0.09).toFixed(2)}s"></span>`;
-        }
-        return html;
-      };
-      army.innerHTML = makeWave(-4);
-      // 两波接力循环
-      setInterval(() => {
-        if (!document.getElementById('screen-menu').classList.contains('active')) return;
-        army.innerHTML = makeWave(-6);
-      }, 26000);
     }
 
     // 鼠标视差

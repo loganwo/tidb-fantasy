@@ -333,7 +333,9 @@ class GameCore {
       if (r.replicas.length < 3) { rate += CFG.RISK_REPLICA_SHORT; src.push(`R${r.id} 副本不足(${r.replicas.length}/3)`); }
     }
     if (!src.length) rate = -CFG.RISK_DECAY; // 稳态奖励：风险回落
-    if (this.buffs.wall) rate = Math.min(rate, rate > 0 ? rate * 0.6 : rate); // 城墙加固：风险累积 -40%
+    // 城墙加固军备：正向风险累积按 -15%/级 递减（回落不受影响）
+    const wallLv = this.buffs.wallLv || 0;
+    if (rate > 0 && wallLv > 0) rate *= Math.max(0, 1 - CFG.RISK_WALL_CUT * wallLv);
     this.risk = clamp(this.risk + rate * dt, 0, CFG.RISK_MAX);
     this.peakRisk = Math.max(this.peakRisk, this.risk);
     this.riskSources = src;

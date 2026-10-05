@@ -300,7 +300,7 @@ class EventSystem {
         // 选目标：加权随机——仓多的城更"肥"权重更高，但每波目标都会变（不再固定打最肥的那一座）
         // 注意：whCount 收的是【城市 id】，不是 tikv 对象（旧代码传 t.id 给收 t 的函数，恒返回 0 → 排序失效 → 永远打第一座城）
         const whCount = id => core.regions.filter(r => !r.dead && r.replicas.includes(id)).length;
-        const pick = this.pickFoeTarget(pool, whCount);
+        const pick = this.pickFoeTarget(pool);
         if (!pick) return false;
         this._lastFoe = pick.id;
         const maxWh = Math.max.apply(null, pool.map(t => whCount(t.id)));
