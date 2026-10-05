@@ -16,9 +16,14 @@ class SandboxScene extends Phaser.Scene {
     App.onSceneReady(this);
   }
   registerSvg(key, url) {
-    const img = new Image();
-    img.onload = () => { if (!this.textures.exists(key)) this.textures.addImage(key, img); };
-    img.src = url;
+    // SVG/PNG 纹理注册：带失败重试（线上网络波动/被重置时自动重发，最多 3 次）
+    const tryLoad = (left) => {
+      const img = new Image();
+      img.onload = () => { if (!this.textures.exists(key)) this.textures.addImage(key, img); };
+      img.onerror = () => { if (left > 0) setTimeout(() => tryLoad(left - 1), 600); };
+      img.src = url + (url.includes('?') ? '&' : '?') + 'r=' + Date.now(); // 破缓存重试
+    };
+    tryLoad(3);
   }
   update(time, delta) { App.tick(Math.min(delta, 50) / 1000); }
 }
