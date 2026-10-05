@@ -1,0 +1,10 @@
+# 不要把本地含密码的 .env 传到 Vercel（凭据走项目环境变量 -e 注入）
+server/.env
+.env
+.env.local
+# 本地/测试杂物
+node_modules
+.qa
+promo
+.git
+*.log

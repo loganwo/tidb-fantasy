@@ -48,7 +48,7 @@
 </div>
 <script>
   // 部署时改成你的排行榜 API 基地址（与游戏 js/api-config.js 一致）
-  window.API_BASE = window.API_BASE || 'https://你的vercel地址.vercel.app';
+  window.API_BASE = window.API_BASE || 'https://tidb-fantasy-leaderboard.vercel.app';
   const q = new URLSearchParams(location.search).get('api');
   if (q) window.API_BASE = q;
   const base = () => (window.API_BASE || '').replace(/\/$/, '');

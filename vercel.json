@@ -1,5 +1,8 @@
 {
   "functions": {
     "api/leaderboard.js": { "maxDuration": 20 }
-  }
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/leaderboard" }
+  ]
 }

@@ -6,4 +6,5 @@
  *    例如：  window.API_BASE = 'https://tidb-fantasy-api.vercel.app';
  * 密码只存在于服务端，浏览器永远只拿到这个基地址。
  */
-window.API_BASE = window.API_BASE || '';
+// 排行榜 API 已部署到 Vercel（真实连接平凯云 TiDB），GitHub Pages 上的游戏跨域调用它。
+window.API_BASE = window.API_BASE || 'https://tidb-fantasy-leaderboard.vercel.app';
