@@ -48,6 +48,10 @@ node server/leaderboard-server.js           # 启动后访问 http://localhost:8
    `https://tidb-fantasy-xxxx.vercel.app`
 
 > 表会在首次请求时自动创建在 `tidb_fantasy` 库（无建库权限时回退 `sys`）。
+>
+> ⚠️ **重要**：若项目关联了 Git 仓库，`vercel deploy -e KEY=VALUE` 命令行一次性设置的环境变量
+> **不会**持久保存，后续 Git push 触发的自动部署会丢失这些变量（导致 "using password: NO" 500 错误）。
+> 请务必在 Vercel 控制台 Settings → Environment Variables 或通过 `vercel env add` 持久配置。
 
 ---
 
