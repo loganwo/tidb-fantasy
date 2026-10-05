@@ -3,6 +3,8 @@
 > **守城策略游戏 × TiDB 原理教学** —— 十万大军压境，你是城邦的调度官。
 >
 > 🌐 **在线体验**：<https://tigame.555662.xyz/>
+> 🛢 **数据库**：已**真实接入平凯云 TiDB（Serverless）** —— 每局战绩与对局流水落库 TiDB，看板实时读取（满足"部署在平凯数据库云服务 / TiDB 上"参赛条件）。
+> 🏆 **排行榜 / 对局数据看板**（评委核查入口）：<https://tidb-fantasy-leaderboard.vercel.app/leaderboard.html>
 
 ## 一句话玩法
 
@@ -58,6 +60,62 @@
 2. **仓是城墙的血条**：被围的城靠拖仓硬扛，空城会被直接占领——永远给每座城留仓；
 3. **阵型即容灾**：堡垒护住副本兵、多数派相邻增伤——好阵型本身就是 Raft 架构。
 
+## 真实连接平凯云 TiDB · 排行榜与对局数据看板
+
+本作不只是"静态小游戏"——它**真实连接平凯云 TiDB（Serverless，需 TLS）**：玩家每打完一局，得分与对局流水会写入 TiDB；游戏内"战功榜"与独立看板页再从 TiDB 实时读出。数据库密码只存在于服务端，浏览器仅持有 API 基地址，杜绝凭据泄露。
+
+### 评委怎么看（30 秒验证）
+
+1. 打开**在线体验** <https://tigame.555662.xyz/> → 主菜单点「🏆 排行榜」→ 切到「📊 对局看板」标签，即可看到实时榜单（总对局 / 胜率 / 参战指挥官 / 最高分 / 今日对局 + 全球总榜 + 最近对局）；
+2. 或直接打开独立看板页 <https://tidb-fantasy-leaderboard.vercel.app/leaderboard.html>（数据每 15 秒自动刷新，全部来自 TiDB）；
+3. 打一局并结算 → 成绩按你开局取的「指挥官代号」落库，回到看板即可看到自己的名字上榜。
+
+> 看板页顶部标注 `🛢 平凯云 TiDB`，连不上时会明确提示"看板暂时连不上"，正常时显示真实聚合数据——可据此判定是否为真·TiDB 接入。
+
+### 功能构成
+
+| 入口 | 说明 | 数据来源 |
+|---|---|---|
+| 🎮 游戏内「战功榜」 | 主菜单 / 结算页可查全球总榜与分关排名 | `GET /api/leaderboard` |
+| 🌐 独立看板页 `leaderboard.html` | 汇总统计 + 全球总榜 + 最近对局 | `/api/stats` + `/api/matches` + `/api/leaderboard` |
+| ⌨ 开局取名 | 首次进入自动弹窗取「指挥官代号」，未取名不能开打，成绩按代号署名 | 写入 `lb_scores.player` / `lb_matches.player` |
+
+### 技术架构
+
+```
+ 浏览器(游戏 / 看板页)
+   │  fetch(API_BASE + /api/*)
+   ▼
+ 排行榜后端 (Vercel Serverless · Node + mysql2，TLS 连平凯云 TiDB)
+   │  INSERT / SELECT
+   ▼
+ 平凯云 TiDB ── 库：tidb_fantasy ── 表：lb_scores / lb_matches
+```
+
+- 游戏前端：静态托管在 GitHub Pages（自定义域名 `tigame.555662.xyz`）。
+- 排行榜后端：部署在 Vercel（免费 HTTPS，已关闭 Deployment Protection，CORS 放开 `*`），负责连 TiDB。
+- 部署与配置细节见 [DEPLOY.md](DEPLOY.md)。
+
+### 公开 API（评委可直连核对）
+
+| 方法 | 路径 | 作用 |
+|---|---|---|
+| GET | `/api/stats` | 总对局、胜率、参战指挥官数、最高分、今日对局 |
+| GET | `/api/leaderboard?level=all&limit=50` | 全球战功总榜（Top 50） |
+| GET | `/api/matches?limit=20` | 最近对局流水 |
+| POST | `/api/score` | 提交一局得分（写入 `lb_scores`） |
+| POST | `/api/match` | 提交一条对局流水（写入 `lb_matches`） |
+
+示例：`curl https://tidb-fantasy-leaderboard.vercel.app/api/stats`
+
+### 数据库说明（评委核查用）
+
+- 连接：`gateway01.cn-shanghai.aliyun.pingkai.cn:4000`，TLS 安全传输。
+- 库：`tidb_fantasy`（首次请求自动建库；无权限则回退 `sys`）。
+- 表：
+  - `lb_scores`：排行榜得分（`player` / `lvl` / `lvl_name` / `score` / `stars` / `won` / `duration_sec` / `peak_risk`）。
+  - `lb_matches`：对局流水（`player` / `lvl` / `lvl_name` / `result` / `stars` / `duration_sec` / `peak_risk`）。
+
 ## 质量保障与 AI 审计（Loop）
 
 - **回归测试**：`node test/smoke.test.js` —— 10 关实例化与模拟、迁移 / 分裂、宕机不救、AI 防守、任务与风险等核心逻辑（纯 Node，无 DOM 依赖）；
@@ -73,5 +131,6 @@
 
 ## 技术
 
-Phaser 3 / 原生 Canvas，零依赖静态部署；素材含 AI 生成城门插画与 Kenney UI Pack（CC0）。
-对应 TiDB 原理由 PingCAP 社区资料整理，游戏仅供教学演示。
+- 前端：Phaser 3 / 原生 Canvas，零依赖静态部署；素材含 AI 生成城门插画与 Kenney UI Pack（CC0）。
+- 后端：Node + mysql2，通过 TLS 真实连接**平凯云 TiDB（Serverless）**，承载排行榜与对局数据看板（Vercel Serverless Functions）。
+- 对应 TiDB 原理由 PingCAP 社区资料整理，游戏仅供教学演示。
