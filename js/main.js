@@ -90,6 +90,38 @@ const App = {
     document.getElementById('btn-continue').addEventListener('click', () => {
       SFX.play('click'); this.startLevel(this.unlockedCount());
     });
+
+    /* ---------- 开局取名界面 ---------- */
+    const nameModal = document.getElementById('name-modal');
+    const nameInput = document.getElementById('name-input');
+    const nameErr = document.getElementById('name-err');
+    this.refreshNameTag = () => {
+      const t = document.getElementById('menu-name');
+      if (!t) return;
+      t.innerHTML = '';
+      t.appendChild(document.createTextNode('指挥官：'));
+      const b = document.createElement('b'); b.textContent = LB.getName(); t.appendChild(b);
+      const s = document.createElement('span'); s.className = 'edit'; s.textContent = '✎ 改名'; t.appendChild(s);
+    };
+    this.openNameModal = () => {
+      if (nameInput) nameInput.value = LB.getName() === '匿名指挥官' ? '' : LB.getName();
+      if (nameErr) nameErr.textContent = '';
+      nameModal.classList.remove('hidden');
+      if (nameInput) setTimeout(() => nameInput.focus(), 50);
+    };
+    this.confirmName = () => {
+      const v = (nameInput.value || '').trim();
+      if (v.length < 1) { if (nameErr) nameErr.textContent = '请输入至少一个字作为代号'; return; }
+      LB.setName(v.slice(0, 40));
+      this.refreshNameTag();
+      nameModal.classList.add('hidden');
+    };
+    const nameConfirmBtn = document.getElementById('name-confirm');
+    if (nameConfirmBtn) nameConfirmBtn.addEventListener('click', () => this.confirmName());
+    if (nameInput) nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') this.confirmName(); });
+    const nameTag = document.getElementById('menu-name');
+    if (nameTag) nameTag.addEventListener('click', () => { SFX.play('click'); this.openNameModal(); });
+
     this.initMenuFx();
     document.getElementById('btn-reset-progress').addEventListener('click', () => {
       if (confirm('确定清空全部通关进度与星级吗？')) {
@@ -99,6 +131,10 @@ const App = {
       }
     });
     this.showMenu();
+    // 首次进入（无代号）自动弹取名界面
+    if (typeof LB !== 'undefined' && LB.getName() === '匿名指挥官' && this.openNameModal) {
+      this.openNameModal();
+    }
   },
 
   onSceneReady(scene) {
@@ -111,6 +147,11 @@ const App = {
   startLevel(id) {
     const lv = LEVELS[id - 1];
     if (!lv) return;
+    // 开局前必须取好指挥官代号，否则先弹取名界面
+    if (typeof LB !== 'undefined' && LB.getName() === '匿名指挥官') {
+      if (this.openNameModal) this.openNameModal();
+      return;
+    }
     if (!this.renderer) { setTimeout(() => this.startLevel(id), 100); return; } // 场景未就绪
 
     this.ended = false;
@@ -345,6 +386,7 @@ const App = {
   /* ---------- 菜单 / 图鉴 ---------- */
   showMenu() {
     HUD.showScreen('menu');
+    if (this.refreshNameTag) this.refreshNameTag();
     const total = Object.values(this.progress.stars).reduce((a, b) => a + b, 0);
     const cleared = this.chaptersCleared();
     const title = TITLES[Math.max(0, ...cleared)] || '见习生';

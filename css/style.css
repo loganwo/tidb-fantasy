@@ -971,3 +971,38 @@ button:focus-visible, .lv-cell:focus-visible { outline: 2px solid #7fb2cc; outli
   .lb-table th:nth-child(6), .lb-table td:nth-child(6),
   .lb-table th:nth-child(8), .lb-table td:nth-child(8) { display: none; }
 }
+
+/* ---------- 开局取名界面 ---------- */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(20, 38, 63, .55); backdrop-filter: blur(3px);
+}
+.name-card {
+  width: min(440px, 90vw); background: var(--panel);
+  border-radius: 16px; padding: 28px 26px; text-align: center;
+  box-shadow: 0 18px 50px rgba(20, 38, 63, .35);
+  animation: namePop .22s ease;
+}
+@keyframes namePop { from { transform: translateY(14px) scale(.96); opacity: 0; } to { transform: none; opacity: 1; } }
+.name-card h2 { color: var(--primary-dark); font-size: 22px; margin-bottom: 10px; }
+.name-intro { color: var(--text-sub); font-size: 13.5px; line-height: 1.6; margin-bottom: 18px; }
+.name-intro b { color: var(--primary); }
+.name-input {
+  width: 100%; padding: 12px 14px; font-size: 16px; font-family: inherit;
+  border: 1.5px solid var(--border); border-radius: 10px; outline: none;
+  transition: border-color .15s; text-align: center; color: var(--text);
+}
+.name-input:focus { border-color: var(--primary); }
+.name-err { color: var(--danger); font-size: 13px; min-height: 18px; margin: 8px 0 2px; }
+.name-card .btn.big { width: 100%; margin-top: 6px; padding: 13px 0; font-size: 16px; }
+
+/* 主菜单指挥官标签 */
+.menu-name {
+  background: #eef4f9; border: 1px solid var(--border); border-radius: 10px;
+  padding: 9px 12px; font-size: 14px; color: var(--text-sub); cursor: pointer;
+  display: flex; align-items: center; gap: 6px; transition: background .15s;
+}
+.menu-name:hover { background: #e3eef6; }
+.menu-name b { color: var(--primary-dark); font-size: 15px; }
+.menu-name .edit { color: var(--primary); font-size: 12.5px; margin-left: auto; }
