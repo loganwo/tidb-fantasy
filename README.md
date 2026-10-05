@@ -92,10 +92,6 @@
  平凯云 TiDB ── 库：tidb_fantasy ── 表：lb_scores / lb_matches
 ```
 
-- 游戏前端：静态托管在 GitHub Pages（自定义域名 `tigame.555662.xyz`）。
-- 排行榜后端：部署在 Vercel（免费 HTTPS，已关闭 Deployment Protection，CORS 放开 `*`），负责连 TiDB。
-- 部署与配置细节见 [DEPLOY.md](DEPLOY.md)。
-
 ### 公开 API（可直连核对）
 
 | 方法 | 路径 | 作用 |
