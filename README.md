@@ -4,7 +4,7 @@
 >
 > 🌐 **在线体验**：<https://tigame.555662.xyz/>
 > 🛢 **数据库**：已**真实接入平凯云 TiDB（Serverless）** —— 每局战绩与对局流水落库 TiDB，看板实时读取（满足"部署在平凯数据库云服务 / TiDB 上"参赛条件）。
-> 🏆 **排行榜 / 对局数据看板**（评委核查入口）：<https://tidb-fantasy-leaderboard.vercel.app/leaderboard.html>
+> 🏆 **排行榜 / 对局数据看板**：<https://tidb-fantasy-leaderboard.vercel.app/leaderboard.html>
 
 ## 一句话玩法
 
@@ -64,7 +64,7 @@
 
 本作不只是"静态小游戏"——它**真实连接平凯云 TiDB（Serverless，需 TLS）**：玩家每打完一局，得分与对局流水会写入 TiDB；游戏内"战功榜"与独立看板页再从 TiDB 实时读出。数据库密码只存在于服务端，浏览器仅持有 API 基地址，杜绝凭据泄露。
 
-### 评委怎么看（30 秒验证）
+### 怎么看（30 秒验证）
 
 1. 打开**在线体验** <https://tigame.555662.xyz/> → 主菜单点「🏆 排行榜」→ 切到「📊 对局看板」标签，即可看到实时榜单（总对局 / 胜率 / 参战指挥官 / 最高分 / 今日对局 + 全球总榜 + 最近对局）；
 2. 或直接打开独立看板页 <https://tidb-fantasy-leaderboard.vercel.app/leaderboard.html>（数据每 15 秒自动刷新，全部来自 TiDB）；
@@ -96,7 +96,7 @@
 - 排行榜后端：部署在 Vercel（免费 HTTPS，已关闭 Deployment Protection，CORS 放开 `*`），负责连 TiDB。
 - 部署与配置细节见 [DEPLOY.md](DEPLOY.md)。
 
-### 公开 API（评委可直连核对）
+### 公开 API（可直连核对）
 
 | 方法 | 路径 | 作用 |
 |---|---|---|
@@ -108,7 +108,7 @@
 
 示例：`curl https://tidb-fantasy-leaderboard.vercel.app/api/stats`
 
-### 数据库说明（评委核查用）
+### 数据库说明
 
 - 连接：`gateway01.cn-shanghai.aliyun.pingkai.cn:4000`，TLS 安全传输。
 - 库：`tidb_fantasy`（首次请求自动建库；无权限则回退 `sys`）。
