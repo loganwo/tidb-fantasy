@@ -46,13 +46,13 @@
   <div class="table-wrap"><div id="matches"></div></div>
   <div class="tip">数据每 15 秒自动刷新 · 真实连接平凯云 TiDB Serverless 集群</div>
 </div>
+<script src="js/api-config.js?v=31"></script>
 <script>
-  // 部署时改成你的排行榜 API 基地址（与游戏 js/api-config.js 一致）
-  window.API_BASE = window.API_BASE || 'https://tidb-fantasy-leaderboard.vercel.app';
-  const q = new URLSearchParams(location.search).get('api');
-  if (q) window.API_BASE = q;
-  const base = () => (window.API_BASE || '').replace(/\/$/, '');
-  async function api(p){ try{ const r=await fetch(base()+'/api'+p); if(!r.ok) return null; return await r.json(); }catch(e){ return null; } }
+  // API 基地址与双后端容灾由 js/api-config.js 统一提供（?api= 可临时覆盖端点）
+  const api = async (p) => {
+    try { const r = await window.API(p); if (!r || !r.ok) return null; return await r.json(); }
+    catch (e) { return null; }
+  };
   function stars(n){ n=n||0; return '★'.repeat(n)+'☆'.repeat(3-n); }
   function fmt(s){ s=Math.max(0,Math.round(s||0)); const m=Math.floor(s/60),r=s%60; return m+':'+String(r).padStart(2,'0'); }
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }

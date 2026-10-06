@@ -3,7 +3,7 @@
  * 排行榜客户端 + 战功榜 UI（真实连接平凯云 TiDB）
  *   LB    : 与后端 /api 通信（提交成绩/对局、拉取榜单/看板）
  *   LBUI  : 游戏内「战功榜」界面（菜单入口 + 结算后跳转）
- * 依赖：js/api-config.js（提供 window.API_BASE）、全局 HUD / SFX / LEVELS
+ * 依赖：js/api-config.js（提供 window.API 容灾请求）、全局 HUD / SFX / LEVELS
  * ========================================================= */
 
 window.LB = (function () {
@@ -14,11 +14,10 @@ window.LB = (function () {
   function setName(n) {
     try { localStorage.setItem(KEY, (n || '').trim().slice(0, 40) || '匿名指挥官'); } catch (e) {}
   }
-  function base() { return (window.API_BASE || '').replace(/\/$/, ''); }
   async function api(path, opts) {
     try {
-      const r = await fetch(base() + '/api' + path, Object.assign({ headers: { 'Content-Type': 'application/json' } }, opts));
-      if (!r.ok) return null;
+      const r = await window.API(path, opts);
+      if (!r || !r.ok) return null;
       return await r.json();
     } catch (e) { return null; }
   }
