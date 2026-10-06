@@ -35,6 +35,42 @@
 | 新城奠基 | 围攻战中新城上线，扩容机会 | 在线扩容 scale-out |
 | 弃城之令 | 一城有序撤空下线 | 有序缩容 |
 
+## TiDB 技术原理插图
+
+以下插图将游戏的「城邦世界」与 TiDB 的分布式架构一一对应：
+
+### 分片城邦 · TiDB 整体架构
+
+<p align="center">
+  <img src="asset/tidb-principles/01-sharding-city.jpg" alt="分片城邦" width="90%">
+  <br>
+  <em>执政官 TiDB 居中调度，PD 星图仲裁者俯瞰全局，TiKV 盾卫守护各片数据，TiFlash 观测塔提供实时分析。</em>
+</p>
+
+### 星谱仲裁 · Region 调度与副本分布
+
+<p align="center">
+  <img src="asset/tidb-principles/02-region-arbiter.jpg" alt="星谱仲裁" width="90%">
+  <br>
+  <em>PD 根据负载与拓扑将数据划分为 Region（星光节点），在 TiKV 之间调度、分裂与迁移，维持三副本均衡。</em>
+</p>
+
+### 数据神殿 · 存储引擎与容灾
+
+<p align="center">
+  <img src="asset/tidb-principles/03-data-temple.jpg" alt="数据神殿" width="90%">
+  <br>
+  <em>TiKV 将数据化作水晶柱多副本保存；TiFlash 列存提供分析视角；中枢大屏即是 TiDB 的 SQL 入口与全局视图。</em>
+</p>
+
+### 决战数据风暴 · HTAP 与实时抗灾
+
+<p align="center">
+  <img src="asset/tidb-principles/04-data-storm.jpg" alt="决战数据风暴" width="90%">
+  <br>
+  <em>当数据风暴（突发流量/故障）来袭，TiKV 行存顶住交易压力，TiFlash 实时分析助阵，PD 快速调度实现自愈。</em>
+</p>
+
 ## 关卡（10 关 · 4 章，全部紧凑节奏）
 
 | 章 | 关卡 | 时长 | 特色 |
