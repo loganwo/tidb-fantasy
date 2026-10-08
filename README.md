@@ -4,7 +4,7 @@
 >
 > 🌐 **在线体验**：<https://tigame.555662.xyz/>
 > 🛢 **数据库**：已**真实接入平凯云 TiDB（Serverless）** —— 每局战绩与对局流水落库 TiDB，看板实时读取（满足"部署在平凯数据库云服务 / TiDB 上"参赛条件）。
-> 🏆 **排行榜 / 对局数据看板**：<https://tidb-fantasy-leaderboard.vercel.app/leaderboard.html>
+> 🏆 **排行榜 / 对局数据看板**：<https://tigame.546654.xyz/leaderboard.html>
 
 ## 一句话玩法
 
@@ -103,7 +103,7 @@
 ### 怎么看（30 秒验证）
 
 1. 打开**在线体验** <https://tigame.555662.xyz/> → 主菜单点「🏆 排行榜」→ 切到「📊 对局看板」标签，即可看到实时榜单（总对局 / 胜率 / 参战指挥官 / 最高分 / 今日对局 + 全球总榜 + 最近对局）；
-2. 或直接打开独立看板页 <https://tidb-fantasy-leaderboard.vercel.app/leaderboard.html>（数据每 15 秒自动刷新，全部来自 TiDB）；
+2. 或直接打开独立看板页 <https://tigame.546654.xyz/leaderboard.html>（数据每 15 秒自动刷新，全部来自 TiDB）；
 3. 打一局并结算 → 成绩按你开局取的「指挥官代号」落库，回到看板即可看到自己的名字上榜。
 
 > 看板页顶部标注 `🛢 平凯云 TiDB`，连不上时会明确提示"看板暂时连不上"，正常时显示真实聚合数据——可据此判定是否为真·TiDB 接入。
@@ -138,7 +138,7 @@
 | POST | `/api/score` | 提交一局得分（写入 `lb_scores`） |
 | POST | `/api/match` | 提交一条对局流水（写入 `lb_matches`） |
 
-示例：`curl https://tidb-fantasy-leaderboard.vercel.app/api/stats`
+示例：`curl https://tidbapi.546654.xyz/api/stats`
 
 ### 数据库说明
 

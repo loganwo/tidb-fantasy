@@ -1,24 +1,22 @@
 'use strict';
 /*
- * 排行榜 API 配置 —— 多端点容灾
+ * 排行榜 API 配置 —— 仅自托管后端
  *  - 页面部署在 tigame.546654.xyz（Cloudflare Tunnel → Ubuntu 自托管一体服务）时：
  *      API 走同源（同一进程直接处理 /api），最快且无跨域。
  *  - 页面部署在 GitHub Pages 等其他域时：
- *      依次尝试 Vercel 主节点 / 自托管 Tunnel 兜底节点，谁先通用谁。
+ *      统一走自托管 API 节点 tidbapi.546654.xyz（Cloudflare Tunnel → Ubuntu 8900）。
  *  URL 加 ?api=https://你的域名 可临时覆盖为单一端点（调试用）。
  *  仅含公开域名，不含任何数据库凭据（凭据只在服务端）。
  */
 (function () {
   var SELF_HOST = 'tigame.546654.xyz';
+  var SELF_API = 'https://tidbapi.546654.xyz';
   var EPS;
 
   if (window.location && window.location.hostname === SELF_HOST) {
     EPS = ['']; // 同源：fetch('/api/...')
   } else {
-    EPS = [
-      'https://tidb-fantasy-leaderboard.vercel.app', // 主节点：Vercel（海外，国内可能不稳）
-      'https://tidbapi.546654.xyz'                   // 兜底节点：自托管 Tunnel（国内直连）
-    ];
+    EPS = [SELF_API]; // 自托管 Tunnel 节点（唯一）
   }
 
   try {

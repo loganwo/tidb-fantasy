@@ -105,7 +105,7 @@ node server/leaderboard-server.js           # 启动后访问 http://localhost:8
 ## 七、本次已上线（实测）
 
 - 排行榜 API（Vercel Serverless，免费 HTTPS）已部署并验证：
-  **`https://tidb-fantasy-leaderboard.vercel.app`**
+  **`https://tidbapi.546654.xyz`**
   - 已关闭 Vercel Deployment Protection（Vercel Authentication），否则 GitHub Pages 上的游戏跨域调用会被拦截。
   - 公网直连 `/api/stats`、`/api/leaderboard`、`/api/score`（POST 实测落库 `tidb_fantasy`）全部正常，CORS 已放开（`Access-Control-Allow-Origin: *`）。
 - 游戏侧 `js/api-config.js` 与 `leaderboard.html` 的 `API_BASE` 已指向上述地址，push 后 GitHub Pages 上的游戏即可实时读写 TiDB。
