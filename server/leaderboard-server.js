@@ -9,13 +9,13 @@ const fs = require('fs');
 const path = require('path');
 const { handleApi } = require('./leaderboard-handler');
 
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = process.env.STATIC_ROOT ? path.resolve(process.env.STATIC_ROOT) : path.resolve(__dirname, '..');
 const PORT = process.env.PORT || 8800;
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.js': 'application/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8', '.json': 'application/json; charset=utf-8',
   '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
-  '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.woff2': 'font/woff2',
+  '.webp': 'image/webp', '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.woff2': 'font/woff2',
 };
 
 const server = http.createServer(async (req, res) => {
@@ -32,6 +32,7 @@ const server = http.createServer(async (req, res) => {
     res.statusCode = 404; res.setHeader('Content-Type', 'text/plain; charset=utf-8'); res.end('404 Not Found'); return;
   }
   res.setHeader('Content-Type', MIME[path.extname(fp).toLowerCase()] || 'application/octet-stream');
+  res.setHeader('Cache-Control', path.extname(fp) === '.html' ? 'no-cache' : 'public, max-age=86400');
   fs.createReadStream(fp).pipe(res);
 });
 
