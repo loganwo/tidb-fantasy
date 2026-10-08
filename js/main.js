@@ -11,8 +11,8 @@ class SandboxScene extends Phaser.Scene {
     // 纹理资产用 PNG（SVG 直传 WebGL 在部分浏览器/GPU 下栅格化异常会画成黑块，PNG 行为一致）
     for (let i = 0; i < 12; i++) this.registerSvg('sup' + i, 'asset/icons/supply-' + i + '.png?v=2');
     this.registerSvg('scenebg', 'asset/icons/scene-bg.png?v=2');
-    this.registerSvg('foe', 'asset/foe.png?v=4');
-    this.registerSvg('foe2', 'asset/foe2.png?v=4');   // 攻城重甲（围攻军团）
+    this.registerSvg('foe', 'asset/foe.webp?v=4');
+    this.registerSvg('foe2', 'asset/foe2.webp?v=4');   // 攻城重甲（围攻军团）
     for (let i = 0; i < 6; i++) this.registerSvg('gate' + i, 'asset/gates/gate-' + i + '.jpg?v=26');
     App.onSceneReady(this);
   }
@@ -405,7 +405,7 @@ const App = {
       const warPhase = warDays > 7 ? '远在边境' : warDays > 4 ? '正在逼近' : warDays > 1 ? '已兵临城下' : warDays > 0 ? '围城总攻在即' : '兵临城下！';
       const nextAt = cityLv * 30;
       heroCard.innerHTML = `
-        <img src="asset/hero.jpg" alt="小Ti">
+        <img src="asset/hero.webp" alt="小Ti">
         <div><b>小Ti · Tidby</b><span class="hero-badge">${title}</span>
         <span class="city-lv">🏰 ${CITY_LV[cityLv - 1]} Lv${cityLv}　🪨 ${city}${cityLv < 5 ? ' / ' + nextAt : ''}</span>
         <span class="war-line">⚔️ 十万大军：${warPhase}（剩 ${warDays} 关防线）</span><span class="city-perks">🏛 ${cityLv >= 2 ? Object.values(ECON.CITY_PERKS).slice(0, cityLv - 1).join(" · ") : "升级城邦解锁加成"}</span><i>${doneTasks >= totalTasks ? '全部任务达成，真正的城邦之主！' : '把混沌赶出分片城邦！'}</i></div>`;
