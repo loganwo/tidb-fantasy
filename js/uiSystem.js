@@ -922,7 +922,10 @@ const HUD = {
       (core.timeLeft <= 10 || (es && (es.warnings.length > 0 || es.sieges.length > 0)));
     if (urgent) {
       const now = performance.now();
-      if (!this._hbLast || now - this._hbLast > 850) {
+      // 节奏随危险程度收紧：普通预警 0.64s 一拍；兵临城下或读秒阶段压到 0.48s（急迫感）
+      const panic = (core.timeLeft <= 10 || (es && es.sieges.length > 0));
+      const gap = panic ? 480 : 640;
+      if (!this._hbLast || now - this._hbLast > gap) {
         this._hbLast = now;
         SFX.play('heartbeat');
       }

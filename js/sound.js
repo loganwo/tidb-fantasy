@@ -54,8 +54,8 @@ const SFX = {
         // 所以主体抬到可闻频段并叠一层 square 谐波做"点击感"，小喇叭也能听见。
         this.tone(190, 120, 0.12, 'triangle', 0.26);
         this.tone(380, 300, 0.045, 'square', 0.05);
-        this.tone(160, 104, 0.16, 'triangle', 0.2, 0.19);
-        this.tone(320, 240, 0.045, 'square', 0.04, 0.19);
+        this.tone(160, 104, 0.16, 'triangle', 0.2, 0.15);
+        this.tone(320, 240, 0.045, 'square', 0.04, 0.15);
         break;
     }
   },
