@@ -49,9 +49,13 @@ const SFX = {
         this.tone(320, 90, 0.18, 'square', 0.14);
         this.tone(140, 60, 0.25, 'sawtooth', 0.1, 0.03);
         break;
-      case 'heartbeat': // 紧张心跳：低频双跳（62Hz 多数笔记本喇叭放不出来，提到可闻频段）
-        this.tone(96, 70, 0.13, 'sine', 0.3);
-        this.tone(84, 62, 0.17, 'sine', 0.24, 0.19);
+      case 'heartbeat': // 紧张心跳：低频双击 + 中频谐波
+        // 纯低频 sine（原 96/84Hz）在笔记本/手机喇叭上放不出来（低频截止约 150Hz+），
+        // 所以主体抬到可闻频段并叠一层 square 谐波做"点击感"，小喇叭也能听见。
+        this.tone(190, 120, 0.12, 'triangle', 0.26);
+        this.tone(380, 300, 0.045, 'square', 0.05);
+        this.tone(160, 104, 0.16, 'triangle', 0.2, 0.19);
+        this.tone(320, 240, 0.045, 'square', 0.04, 0.19);
         break;
     }
   },

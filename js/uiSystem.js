@@ -916,9 +916,10 @@ const HUD = {
     const flood = core.floodTimer > 0 ? 'inline-block' : 'none';
     if (c.flood !== flood) { c.flood = flood; el.floodMark.style.display = flood; }
 
-    // 紧张心跳：最后 10 秒或敌袭预警期间，低频鼓点每 0.85 秒一拍
+    // 紧张心跳：最后 10 秒 / 敌军进军预警 / 兵临城下围攻期间，每 0.85 秒一拍
+    // （原先只算 warnings，敌军转入围攻后 warnings 清空、心跳反而戛然而止）
     const urgent = core.status === 'playing' &&
-      (core.timeLeft <= 10 || (es && es.warnings.length > 0));
+      (core.timeLeft <= 10 || (es && (es.warnings.length > 0 || es.sieges.length > 0)));
     if (urgent) {
       const now = performance.now();
       if (!this._hbLast || now - this._hbLast > 850) {
