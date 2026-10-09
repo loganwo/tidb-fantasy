@@ -572,13 +572,21 @@ class SandboxRenderer {
   /* ---------- 宕机倒计时特效 ---------- */
   drawWarnings(core, es) {
     const warns = es ? es.warnings : [];
-    // 新出现的警报：拉响警报音
+    const now = performance.now();
+    // 新出现的警报：立刻拉响（敌军进军=战鼓，弃城之令=短警报）
     for (const w of warns) {
       const key = w.tikv + '_' + w.planned;
       if (!this._warnSeen.has(key)) {
         this._warnSeen.add(key);
-        SFX.play(w.planned ? 'alarm' : 'march'); // 敌军进军=战鼓，弃城之令=短警报
+        if (!w.planned) this._marchLastAt = now;
+        SFX.play(w.planned ? 'alarm' : 'march');
       }
+    }
+    // 行军/围攻持续期间循环擂鼓（约 3.2s 一轮）：
+    // 战鼓只在每波敌人首次出现时播一次，之后整段行军过程就静默了，玩家以为没有音效。
+    if (warns.some(w => !w.planned) && now - (this._marchLastAt || 0) > 3200) {
+      this._marchLastAt = now;
+      SFX.play('march');
     }
     for (const key of [...this._warnSeen]) {
       const tikv = +key.split('_')[0];

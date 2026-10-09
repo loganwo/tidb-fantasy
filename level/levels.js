@@ -18,7 +18,7 @@
 const AV = (window.AVATAR_DATA || {});
 const CHARACTERS = {
   tidby: { name: '小Ti', color: '#2e86ab', avatar: 'asset/hero.webp', zoom: 1.6, origin: '50% 30%' },
-  pit:   { name: '老皮特', color: '#8e44ad', avatar: AV.pit || 'asset/icons/avatar-pit.png' },   // 武斗派军师（zoom 2.8 会把圆框裁到只剩额头，与 king 保持一致全脸显示）
+  pit:   { name: '老皮特', color: '#8e44ad', avatar: AV.pit || 'asset/icons/avatar-pit.jpg' },   // 武斗派军师（zoom 2.8 会把圆框裁到只剩额头，与 king 保持一致全脸显示）
   king:  { name: '混沌之王', color: '#c0392b', avatar: AV.king || 'asset/icons/avatar-king.png' }, // 终极 BOSS
 };
 
