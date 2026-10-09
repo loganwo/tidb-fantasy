@@ -34,6 +34,12 @@ const SFX = {
       case 'select': this.tone(520, 620, 0.07, 'sine', 0.1); break;
       case 'migrate': this.tone(520, 780, 0.12, 'sine', 0.14); break;
       case 'split': this.tone(600, 900, 0.09, 'triangle', 0.14); this.tone(900, 1200, 0.09, 'triangle', 0.1, 0.08); break;
+      case 'march': // 敌军进军：低沉战鼓三连+落地重音（旧 alarm 哔哔声太短太轻，玩家听不出进军）
+        this.tone(165, 105, 0.14, 'triangle', 0.30);
+        this.tone(165, 105, 0.14, 'triangle', 0.30, 0.17);
+        this.tone(165, 78, 0.20, 'triangle', 0.34, 0.34);
+        this.tone(78, 42, 0.38, 'sine', 0.28, 0.34);
+        break;
       case 'alarm': this.tone(880, 880, 0.09, 'square', 0.1); this.tone(880, 880, 0.09, 'square', 0.1, 0.14); break;
       case 'down': this.tone(220, 55, 0.6, 'sawtooth', 0.16); break;
       case 'deny': this.tone(240, 180, 0.12, 'square', 0.1); break;
@@ -43,9 +49,9 @@ const SFX = {
         this.tone(320, 90, 0.18, 'square', 0.14);
         this.tone(140, 60, 0.25, 'sawtooth', 0.1, 0.03);
         break;
-      case 'heartbeat': // 紧张心跳：低频双跳
-        this.tone(62, 44, 0.13, 'sine', 0.26);
-        this.tone(54, 40, 0.17, 'sine', 0.2, 0.19);
+      case 'heartbeat': // 紧张心跳：低频双跳（62Hz 多数笔记本喇叭放不出来，提到可闻频段）
+        this.tone(96, 70, 0.13, 'sine', 0.3);
+        this.tone(84, 62, 0.17, 'sine', 0.24, 0.19);
         break;
     }
   },

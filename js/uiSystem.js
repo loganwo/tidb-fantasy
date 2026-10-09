@@ -577,7 +577,7 @@ class SandboxRenderer {
       const key = w.tikv + '_' + w.planned;
       if (!this._warnSeen.has(key)) {
         this._warnSeen.add(key);
-        SFX.play('alarm');
+        SFX.play(w.planned ? 'alarm' : 'march'); // 敌军进军=战鼓，弃城之令=短警报
       }
     }
     for (const key of [...this._warnSeen]) {
