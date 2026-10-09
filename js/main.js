@@ -85,6 +85,7 @@ const App = {
     });
 
     document.getElementById('btn-codex').addEventListener('click', () => { SFX.play('click'); this.showCodex(); });
+    document.getElementById('btn-guide').addEventListener('click', () => { SFX.play('click'); window.open('guide.html', '_blank'); });
     document.getElementById('btn-leaderboard').addEventListener('click', () => { SFX.play('click'); LBUI.open(); });
     document.getElementById('btn-codex-back').addEventListener('click', () => { SFX.play('click'); this.showMenu(); });
     document.getElementById('btn-continue').addEventListener('click', () => {

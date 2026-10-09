@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>游戏指南 · 分片城邦：TiDB 幻境</title>
+<style>
+  :root {
+    --bg: #14263f; --panel: #1d3350; --panel2: #24405f;
+    --gold: #e8c975; --ink: #f2ecdc; --dim: #9fb0c6;
+    --ok: #7ed491; --warn: #f0a35e; --bad: #e57368; --blue: #6fb3e0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    line-height: 1.7; padding: 24px 12px 60px;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  a { color: var(--blue); text-decoration: none; }
+  h1 { color: var(--gold); font-size: 26px; text-align: center; margin-bottom: 4px; }
+  .sub { text-align: center; color: var(--dim); font-size: 13px; margin-bottom: 28px; }
+  h2 {
+    color: var(--gold); font-size: 19px; margin: 34px 0 12px;
+    padding-left: 10px; border-left: 4px solid var(--gold);
+  }
+  h3 { color: var(--blue); font-size: 15px; margin: 18px 0 6px; }
+  p { margin: 8px 0; font-size: 14px; }
+  .back {
+    display: inline-block; margin-bottom: 18px; padding: 8px 18px;
+    background: var(--panel); border: 1px solid #3a5578; border-radius: 8px;
+    color: var(--ink); font-size: 14px;
+  }
+  .back:hover { background: var(--panel2); }
+  .card {
+    background: var(--panel); border: 1px solid #33507a; border-radius: 12px;
+    padding: 16px 18px; margin: 12px 0;
+  }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 10px 0; }
+  th, td { padding: 8px 10px; border: 1px solid #33507a; text-align: left; }
+  th { background: var(--panel2); color: var(--gold); font-weight: 600; }
+  .tag { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; }
+  .t-gold { background: rgba(232,201,117,.15); color: var(--gold); }
+  .t-blue { background: rgba(111,179,224,.15); color: var(--blue); }
+  .t-ok { background: rgba(126,212,145,.15); color: var(--ok); }
+  .t-bad { background: rgba(229,115,104,.15); color: var(--bad); }
+  .step { display: flex; gap: 14px; margin: 14px 0; align-items: flex-start; }
+  .step-no {
+    flex: none; width: 34px; height: 34px; border-radius: 50%;
+    background: var(--gold); color: #14263f; font-weight: 800; font-size: 17px;
+    display: flex; align-items: center; justify-content: center; margin-top: 2px;
+  }
+  .kbd {
+    display: inline-block; padding: 1px 8px; border-radius: 5px;
+    background: #0e1c30; border: 1px solid #3a5578; font-size: 12.5px;
+    font-family: Consolas, monospace; color: var(--gold);
+  }
+  .demo {
+    background: #0e1c30; border-radius: 8px; padding: 12px 14px; margin: 10px 0;
+    font-family: Consolas, monospace; font-size: 13px; color: #cfe0f0; white-space: pre; overflow-x: auto;
+  }
+  .tip {
+    border-left: 3px solid var(--ok); background: rgba(126,212,145,.07);
+    padding: 10px 14px; border-radius: 0 8px 8px 0; margin: 10px 0; font-size: 13.5px;
+  }
+  .warn-box {
+    border-left: 3px solid var(--bad); background: rgba(229,115,104,.07);
+    padding: 10px 14px; border-radius: 0 8px 8px 0; margin: 10px 0; font-size: 13.5px;
+  }
+  .toc { columns: 2; font-size: 13.5px; color: var(--dim); }
+  @media (max-width: 640px) { .toc { columns: 1; } }
+  .toc a { display: block; padding: 3px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← 返回游戏</a>
+  <h1>📜 新指挥官指南</h1>
+  <div class="sub">分片城邦：TiDB 幻境 · 10 分钟从零到会玩</div>
+
+  <div class="card">
+    <b style="color:var(--gold)">📑 目录</b>
+    <div class="toc">
+      <a href="#story">一、你在守什么</a>
+      <a href="#ui">二、界面怎么看</a>
+      <a href="#basic">三、三个基本操作</a>
+      <a href="#siege">四、敌军攻城怎么办</a>
+      <a href="#events">五、四种灾难事件</a>
+      <a href="#stars">六、星级与失败条件</a>
+      <a href="#route">七、十章攻略路线</a>
+      <a href="#terms">八、黑话对照表</a>
+    </div>
+  </div>
+
+  <h2 id="story">一、你在守什么？</h2>
+  <div class="card">
+    <p>十万大军压境，你是城邦的<b style="color:var(--gold)">调度官</b>。城邦里有 4~6 座城区（TiKV 节点），
+    每座城里堆着许多<b style="color:var(--blue)">仓库</b>（Region 分片）。</p>
+    <p>记住唯一的一条铁律——<b style="color:var(--bad)">三仓铁律</b>：</p>
+    <div class="warn-box">
+      每种物资的 3 座仓必须分守 3 座不同的城。<br>
+      一批物资烧到只剩 1 座仓 → 濒危；烧光 3 座 → <b>永久灭失，无法恢复</b>。<br>
+      任何一座城被烧成空城 → 城防崩溃，关卡直接判负。
+    </div>
+    <p>你要做的：在 35~65 秒的生存倒计时里，拖仓、分仓、支援被围的城，活到最后。</p>
+    <div class="tip">💡 这个铁律就是 TiDB 的 <b>Raft 三副本</b>原理：3 副本丢 1 个还能服务，丢 2 个数据无法恢复。</div>
+  </div>
+
+  <h2 id="ui">二、界面怎么看（10 秒版）</h2>
+  <div class="card">
+    <table>
+      <tr><th>位置</th><th>是什么</th><th>你要盯什么</th></tr>
+      <tr><td>顶部黄色条</td><td>⚡ 调度算力</td><td>每个操作都要花：转运 1⚡ / 分仓 0.5⚡ / 御敌 3⚡，会自动恢复</td></tr>
+      <tr><td>顶部倒计时</td><td>生存时间</td><td>撑到 0:00 就赢（不弃城、不灭失）</td></tr>
+      <tr><td>风险条/数字</td><td>全局风险值</td><td>越低星级越高；爆仓、失副本都会推高它</td></tr>
+      <tr><td>城区格子</td><td>4~6 座城</td><td>城内负载%：&lt;80% 安全，≥80% 变红要处理</td></tr>
+      <tr><td>彩色方块</td><td>仓库（Region）</td><td>块上的数字=体积；颜色变深/闪烁=在堆积或着火</td></tr>
+      <tr><td>右侧按钮</td><td>操作面板</td><td>选中仓库后亮起【分仓】；被围的城出现【御敌反击】</td></tr>
+    </table>
+  </div>
+
+  <h2 id="basic">三、只有三个基本操作</h2>
+
+  <div class="step"><div class="step-no">1</div><div>
+    <h3>🚚 货物转运（拖拽）—— 消耗 1⚡</h3>
+    <p><b>按住</b>任意彩色仓库块，<b>拖到另一座城区</b>上松开。这批物资的一份副本就搬过去了。</p>
+    <p>什么时候用：城要满了 / 被围的城缺仓 / 敌军预警要打某城，提前把仓搬走。</p>
+  </div></div>
+
+  <div class="step"><div class="step-no">2</div><div>
+    <h3>📦 分仓（点选 + 按钮）—— 消耗 0.5⚡</h3>
+    <p><b>点击</b>一个仓库块选中它，再点右侧<b>【分仓】</b>按钮。它一分为二，各自继承一半存货。</p>
+    <p>什么时候用：仓库体积超过 <b>18</b> 就可以分；超过 <b>36 = 爆仓</b>，持续积累风险，必须分！着火的仓分仓 = 把火势也一分为二。</p>
+    <div class="demo">体积： 22 ──分仓──▶  11 + 11   （两座城各放一个更安全）</div>
+  </div></div>
+
+  <div class="step"><div class="step-no">3</div><div>
+    <h3>⚔️ 御敌反击（按钮）—— 消耗 3⚡</h3>
+    <p>敌军围城时，被围的城内 ≥3 座仓才可点【御敌反击】：出城冲杀，把敌军血量打光它就提前撤退。</p>
+    <p>什么时候用：算力充足、城里仓够多时主动出击；仓不够就老实拖仓支援死守。</p>
+  </div></div>
+
+  <div class="tip">💡 新手前两关有手把手教学，跟着高亮提示做一遍就会。核心口诀：<b>“红仓必分、围城补仓、预警搬仓”</b>。</div>
+
+  <h2 id="siege">四、敌军攻城（最重要的事件）</h2>
+  <div class="card">
+    <p>攻城是两阶段的：</p>
+    <table>
+      <tr><th>阶段</th><th>表现</th><th>你做什么</th></tr>
+      <tr>
+        <td><span class="tag t-gold">① 行军预警</span></td>
+        <td>某座城上方出现 5 秒倒计时狼烟</td>
+        <td>二选一：<b>把这座城里的仓拖走</b>（弃车保帅），或留着准备死守</td>
+      </tr>
+      <tr>
+        <td><span class="tag t-bad">② 围攻消耗战</span></td>
+        <td>敌军围城 14 秒，每 3 秒烧掉城里 1 座仓</td>
+        <td><b>往城里拖仓支援</b>（仓=城墙血条，仓越多烧得越慢），或攒 3⚡ <b>御敌反击</b>提前打退</td>
+      </tr>
+    </table>
+    <p>围攻结束时城里还保有仓库 → 守住；<b>城里一座仓都不剩 → 空城陷落，判负</b>。</p>
+    <div class="warn-box">⚠️ 守城红线：围攻期间城里仓数低于 3 座，城防立即崩溃。支援时宁可多拖 1 座，别贴着红线赌。</div>
+    <div class="tip">💡 驰援不及时（城破了）会让<b>下一次敌袭倒计时减半</b>——越守不住，敌军来得越勤。恶性循环从第一次失误开始。</div>
+  </div>
+
+  <h2 id="events">五、四种灾难事件一览</h2>
+  <div class="card">
+    <table>
+      <tr><th>事件</th><th>图标</th><th>发生了什么</th><th>应对</th></tr>
+      <tr><td><b>敌军攻城</b> nodeDown</td><td>⚔️</td><td>两阶段攻城，围攻烧仓（见上节）</td><td>搬仓 / 补仓 / 御敌</td></tr>
+      <tr><td><b>妖火</b> hotspot</td><td>🔥</td><td>某仓库持续升温发红，堆积风险</td><td><b>对它分仓</b>，火势一分为二就烧不动了</td></tr>
+      <tr><td><b>贸易洪峰</b> flood</td><td>🌊</td><td>10 秒内全局写入量翻 3 倍，仓库集体膨胀</td><td>洪峰前把大仓（&gt;18）提前分好，留出水位</td></tr>
+      <tr><td><b>筑新城</b> scaleUp</td><td>🏗️</td><td>城邦多了一座空城（好事件！）</td><td>把拥挤城区的仓匀过去，负载立刻下降</td></tr>
+      <tr><td><b>弃守令</b> scaleDown</td><td> evac</td><td>军令：30 秒内把某座城撤空下线</td><td>赶紧把该城的仓全拖走，别让物资陪葬</td></tr>
+    </table>
+    <p style="color:var(--dim)">第 9 关之后灾难会<b>同时并发</b>（一边攻城一边着火），先救哪个见下节优先级。</p>
+  </div>
+
+  <h2 id="stars">六、怎么赢、怎么输、星级怎么算</h2>
+  <div class="grid">
+    <div class="card">
+      <h3 style="color:var(--ok)">✅ 胜利条件</h3>
+      <p>生存倒计时走完，且：</p>
+      <p>· 没有城区陷落<br>· 没有物资三仓烧光（永久灭失）<br>· 峰值风险没爆表</p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--bad)">❌ 直接判负</h3>
+      <p>· 任何一座城被烧空（空城陷落）<br>· 风险值拉满<br>· 任务目标未达成</p>
+    </div>
+  </div>
+  <div class="card">
+    <h3>⭐ 星级</h3>
+    <p>通关后按表现给 1~3 星，主要看<b>峰值风险</b>（越低星越多）、副本丢失次数、城区损失。低风险稳态通关 = 三星。</p>
+    <p>每关还有附加<b>任务</b>（如“转运 5 次”“峰值风险 ≤40”），全达成才算完美。</p>
+    <p>通关后战绩自动上报 <b>平凯云 TiDB</b> 排行榜，和全网指挥官比拼分数。</p>
+  </div>
+
+  <h2 id="route">七、十章攻略路线</h2>
+  <div class="card">
+    <table>
+      <tr><th>章</th><th>关卡</th><th>新东西</th><th>过关要诀</th></tr>
+      <tr><td rowspan="2">一 · 先锋试探</td><td>1 黑色倒计时</td><td>教学：转运 / 分仓</td><td>跟着提示走，第一次攻城别慌</td></tr>
+      <tr><td>2 连环警报</td><td>算力恢复变慢</td><td>学会排序：先救烧着的，再救冒烟的</td></tr>
+      <tr><td rowspan="2">二 · 大军压境</td><td>3 贸易洪峰</td><td>洪峰事件</td><td>开局就把 &gt;18 的仓全分掉，留水位</td></tr>
+      <tr><td>4 断粮孤城</td><td>负载倾斜 + 低算力</td><td>优先把倾斜城的仓搬去空城</td></tr>
+      <tr><td rowspan="3">三 · 围城苦战</td><td>5 热点妖火</td><td>妖火事件</td><td>着火仓秒分，火苗一分为二</td></tr>
+      <tr><td>6 扩城屯兵</td><td>新城上线</td><td>主动匀仓去新城，别让它空转</td></tr>
+      <tr><td>7 弃守之令</td><td>弃城事件</td><td>30 秒撤空指定城，手要快</td></tr>
+      <tr><td rowspan="3">四 · 总攻</td><td>8 混战之夜</td><td>灾难并发</td><td>定优先级：副本缺失 &gt; 过载 &gt; 均衡</td></tr>
+      <tr><td>9 三线告急</td><td>六城大地图</td><td>别贪，保住每一座城比刷分重要</td></tr>
+      <tr><td>10 城邦之主</td><td>BOSS 决战</td><td>前面练的所有，全用上</td></tr>
+    </table>
+  </div>
+
+  <h2 id="terms">八、游戏黑话 ↔ TiDB 术语对照</h2>
+  <div class="card">
+    <table>
+      <tr><th>游戏里叫</th><th>TiDB 里是</th><th>一句话解释</th></tr>
+      <tr><td>城区 / 节点</td><td>TiKV 节点</td><td>存数据的机器，有自己的容量</td></tr>
+      <tr><td>仓库</td><td>Region 分片</td><td>数据切片，调度的最小单元</td></tr>
+      <tr><td>三仓铁律</td><td>Raft 三副本</td><td>3 副本分放 3 机，丢 1 可救丢 2 完蛋</td></tr>
+      <tr><td>分仓</td><td>Region Split</td><td>大分片一分为二，自动再平衡</td></tr>
+      <tr><td>转运</td><td>副本迁移</td><td>把副本搬到别的节点</td></tr>
+      <tr><td>调度算力 ⚡</td><td>调度限速</td><td>调度本身也耗资源，不能无限搬</td></tr>
+      <tr><td>妖火</td><td>热点 Hotspot</td><td>某分片访问量远超其他</td></tr>
+      <tr><td>洪峰</td><td>写入洪峰</td><td>大促/秒杀时写入量暴涨</td></tr>
+      <tr><td>筑新城</td><td>扩容 Scale-out</td><td>加节点，容量线性涨</td></tr>
+      <tr><td>弃守令</td><td>缩容下线</td><td>有序搬空再下线，别硬拔</td></tr>
+      <tr><td>御敌反击</td><td>故障自愈</td><td>有冗余才能反击，无副本无容灾</td></tr>
+    </table>
+    <p style="color:var(--dim); margin-top:10px">通关后解锁的 📚 运维图鉴 里有每条原理的完整科普，配合游戏体验食用更佳。</p>
+  </div>
+
+  <div class="card" style="text-align:center; margin-top: 30px">
+    <p style="font-size:15px">准备好了吗，指挥官？</p>
+    <a class="back" href="index.html" style="margin:10px 0 0">⚔️ 进入城邦，开始守城</a>
+  </div>
+</div>
+</body>
+</html>
