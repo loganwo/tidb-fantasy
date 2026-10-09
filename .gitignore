@@ -9,3 +9,5 @@ server/.env
 
 # Node 依赖（部署时由 npm install 生成）
 node_modules/
+
+.vercel
