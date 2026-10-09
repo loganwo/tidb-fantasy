@@ -14,11 +14,12 @@
  * tikvCapacity=300 时，4节点×6分片×20体积 ≈ 30% 初始水位。 */
 'use strict';
 
-/* 剧情角色 */
+/* 剧情角色（头像优先用 base64 内联数据，免疫 Tunnel 传输截断；内联缺失时回退文件路径） */
+const AV = (window.AVATAR_DATA || {});
 const CHARACTERS = {
   tidby: { name: '小Ti', color: '#2e86ab', avatar: 'asset/hero.webp', zoom: 1.6, origin: '50% 30%' },
-  pit:   { name: '老皮特', color: '#8e44ad', avatar: 'asset/icons/avatar-pit.png', zoom: 2.8, origin: '52% 12%' },   // 武斗派军师
-  king:  { name: '混沌之王', color: '#c0392b', avatar: 'asset/icons/avatar-king.png' }, // 终极 BOSS
+  pit:   { name: '老皮特', color: '#8e44ad', avatar: AV.pit || 'asset/icons/avatar-pit.png', zoom: 2.8, origin: '52% 12%' },   // 武斗派军师
+  king:  { name: '混沌之王', color: '#c0392b', avatar: AV.king || 'asset/icons/avatar-king.png' }, // 终极 BOSS
 };
 
 /* 章节通关后授予的称号 */
