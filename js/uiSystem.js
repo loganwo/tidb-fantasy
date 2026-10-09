@@ -103,6 +103,8 @@ class SandboxRenderer {
     this.floodTxt.setVisible(false);
     this._warnSeen.clear();
     this._fallenSeen.clear();
+    this._hbLast = 0;
+    this._marchLastAt = 0;
     this._bursts = [];
     this._offlineCount = 0;
     if (this.enemyG) this.enemyG.clear();
@@ -584,7 +586,7 @@ class SandboxRenderer {
     }
     // 行军/围攻持续期间循环擂鼓（约 3.2s 一轮）：
     // 战鼓只在每波敌人首次出现时播一次，之后整段行军过程就静默了，玩家以为没有音效。
-    if (warns.some(w => !w.planned) && now - (this._marchLastAt || 0) > 3200) {
+    if (core.status === 'playing' && warns.some(w => !w.planned) && now - (this._marchLastAt || 0) > 3200) {
       this._marchLastAt = now;
       SFX.play('march');
     }

@@ -316,6 +316,10 @@ const App = {
   },
 
   endGame() {
+    // 游戏已结束：立即清除循环音效状态，避免结算面板仍循环擂鼓/心跳
+    HUD._hbLast = 0;
+    HUD._marchLastAt = 0;
+    if (HUD._warnSeen) HUD._warnSeen.clear();
     const core = this.core;
     if (core.status === 'won') {
       SFX.play('win');
